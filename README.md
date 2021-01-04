@@ -1,5 +1,5 @@
 # TachyonsHackingBot
-A bot designed for the fan game Tachyons, for practice on hacking on their Discord server.
+A bot designed for the fan game Tachyons (https://spektor.itch.io/tachyon), for practice on hacking on their Discord server.
 
 Requires the ability to read and send messages.
 
