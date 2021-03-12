@@ -60,11 +60,21 @@ def update_charset(guildid, new_charset):
 
 
 @bot.command(name='hack')
-async def start_hack(ctx):
+async def start_hack(ctx, *args):
     guild = ctx.message.guild
-    #start hacking
+    arg_attempt = 6
+    # parse args
+    if (len(args) > 0):
+        try:
+            arg_attempt = int(args[0])
+            if arg_attempt < 4 or arg_attempt > 12:
+                raise ValueError
+        except:
+            await ctx.send("Number of turns must be a number between 4 and 12.")
+            return
+    # start hacking
     if get_status(guild) is None:
-        c.execute("INSERT INTO games VALUES (?, ?, ?, ?, ?)", (str(guild), 0, 6, "", ""))
+        c.execute("INSERT INTO games VALUES (?, ?, ?, ?, ?)", (str(guild), 0, arg_attempt, "", ""))
         conn.commit()
     if get_status(guild) == False:
         char_list = string.ascii_letters + string.digits
@@ -79,7 +89,7 @@ async def start_hack(ctx):
             char_response += item
         response = ("The available letters are: " + char_response)
         update_charset(guild, char_response)
-        update_guesses(guild, 6)
+        update_guesses(guild, arg_attempt)
         update_status(guild, True)
         await ctx.send(response)
     else:
@@ -132,6 +142,10 @@ bot.remove_command("help")
 
 @bot.command(name='help')
 async def help(ctx):
-    await ctx.send("```\nGuess the correct 3-character answer from the provided 6 characters to win. Similar to Mastermind/Bulls and Cows.\n - !hack: start a new game\n - !quit: quits current game\n - !help: displays this message\n```")
+    await ctx.send("""```\nGuess the correct 3-character answer from the provided 6 characters to win. Similar to Mastermind/Bulls and Cows.\n
+    - !hack: start a new game\n
+        - optional: number of turns, from 4 to 12
+    - !quit: quits current game\n
+    - !help: displays this message\n```""")
 
 bot.run(TOKEN)
