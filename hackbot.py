@@ -14,7 +14,8 @@ c.execute("""CREATE TABLE IF NOT EXISTS games(
    guildid TEXT,
    gamestatus INT,
    guesses INT,
-   answer TEXT);
+   answer TEXT,
+   charset TEXT);
 """)
 conn.commit()
 
@@ -50,12 +51,20 @@ def update_guesses(guildid, new_guesses):
     c.execute("UPDATE games SET guesses=? WHERE guildid=?", (new_guesses, str(guildid),))
     conn.commit()
 
+def get_charset(guildid):
+    return c.execute("SELECT charset FROM games WHERE guildid=?", (str(guildid),)).fetchone()[0]
+
+def update_charset(guildid, new_charset):
+    c.execute("UPDATE games SET charset=? WHERE guildid=?", (new_charset, str(guildid),))
+    conn.commit()
+
+
 @bot.command(name='hack')
 async def start_hack(ctx):
     guild = ctx.message.guild
     #start hacking
     if get_status(guild) is None:
-        c.execute("INSERT INTO games VALUES (?, ?, ?, ?)", (str(guild), 0, 6, ""))
+        c.execute("INSERT INTO games VALUES (?, ?, ?, ?, ?)", (str(guild), 0, 6, "", ""))
         conn.commit()
     if get_status(guild) == False:
         char_list = string.ascii_letters + string.digits
@@ -69,6 +78,7 @@ async def start_hack(ctx):
         for item in array:
             char_response += item
         response = ("The available letters are: " + char_response)
+        update_charset(guild, char_response)
         update_guesses(guild, 6)
         update_status(guild, True)
         await ctx.send(response)
@@ -96,18 +106,24 @@ async def on_message(message):
                 await message.channel.send("Correct!")
                 update_status(guild, False)
             else:
+                charset = get_charset(guild)
+                for i in range(3):
+                    char = message.content[i]
+                    if charset.find(char) != -1:
+                        for j in range(3):
+                            if message.content[i] == get_answer(guild)[j]:
+                                if i == j:
+                                    correct += "!"
+                                else:
+                                    correct += "?"
+                    else:
+                        await message.channel.send("One or more of the characters is not part of the given character set.")
+                        return
                 update_guesses(guild, get_guesses(guild) - 1)
                 if get_guesses(guild) == 0:
                     await message.channel.send("You have run out of guesses. The answer was: " + get_answer(guild))
                     update_status(guild, False)
                     return
-                for i in range(3):
-                    for j in range(3):
-                        if message.content[i] == get_answer(guild)[j]:
-                            if i == j:
-                                correct += "!"
-                            else:
-                                correct += "?"
                 correct = ("".join(sorted(correct)))[::-1] # reverse this string to fit with tachyons notation
                 await message.channel.send("Guesses left: " + str(get_guesses(guild)) + ", [" + correct + "]")
         await bot.process_commands(message)
