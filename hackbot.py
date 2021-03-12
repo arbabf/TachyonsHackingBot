@@ -142,10 +142,6 @@ bot.remove_command("help")
 
 @bot.command(name='help')
 async def help(ctx):
-    await ctx.send("""```\nGuess the correct 3-character answer from the provided 6 characters to win. Similar to Mastermind/Bulls and Cows.\n
-    - !hack: start a new game\n
-        - optional: number of turns, from 4 to 12
-    - !quit: quits current game\n
-    - !help: displays this message\n```""")
+    await ctx.send("```\nGuess the correct 3-character answer from the provided 6 characters to win. Similar to Mastermind/Bulls and Cows.\n- !hack: start a new game\n   - optional: number of turns, from 4 to 12\n- !quit: quits current game\n- !help: displays this message```")
 
 bot.run(TOKEN)
