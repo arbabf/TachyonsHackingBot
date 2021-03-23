@@ -7,7 +7,7 @@ https://discord.com/api/oauth2/authorize?client_id=795471473295753216&permission
 
 Commands:
 - !hack: starts a new game
-	optional: number of turns between 4 and 12
+optional: number of turns between 4 and 12
 - !quit: quits current game
 - !help: displays help message
 
