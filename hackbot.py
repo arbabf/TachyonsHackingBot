@@ -61,9 +61,13 @@ def update_charset(guildid, new_charset):
 
 @bot.command(name='hack')
 async def start_hack(ctx, *args):
+    """
+    Initiates a hacking game.
+    Input: variable set of arguments.
+    """
     guild = ctx.message.guild
     arg_attempt = 6
-    # parse args
+    # parse args (or just the one arg, anyway)
     if (len(args) > 0):
         try:
             arg_attempt = int(args[0])
@@ -72,7 +76,7 @@ async def start_hack(ctx, *args):
         except:
             await ctx.send("Number of turns must be a number between 4 and 12.")
             return
-    # start hacking
+    # start the hacking process
     if get_status(guild) is None:
         c.execute("INSERT INTO games VALUES (?, ?, ?, ?, ?)", (str(guild), 0, arg_attempt, "", ""))
         conn.commit()
@@ -85,11 +89,11 @@ async def start_hack(ctx, *args):
         array = random.sample(char_list, 6)
         update_answer(guild, "".join(random.sample(array, 3)))
         char_response = ""
+        update_guesses(guild, arg_attempt)
         for item in array:
             char_response += item
-        response = ("The available letters are: " + char_response)
+        response = ("The available letters are: " + char_response + "\nYou have " + str(get_guesses(guild)) + " guesses.")
         update_charset(guild, char_response)
-        update_guesses(guild, arg_attempt)
         update_status(guild, True)
         await ctx.send(response)
     else:
@@ -97,7 +101,9 @@ async def start_hack(ctx, *args):
 
 @bot.command(name='quit')
 async def quit(ctx):
-    #quit, it's pretty obvious
+    """
+    Quits the current game.
+    """
     guild = ctx.message.guild
     if get_status(guild) == False:
         await ctx.send("No game is in progress!")
@@ -107,7 +113,9 @@ async def quit(ctx):
 
 @bot.event
 async def on_message(message):
-    # retrieve message during hacking game
+    """
+    Process the given message, check if it is three characters long, and compare it against the answer.
+    """
     guild = message.guild
     if message.author != bot.user:
         if get_status(guild) == True and len(message.content) == 3:
@@ -135,13 +143,18 @@ async def on_message(message):
                     update_status(guild, False)
                     return
                 correct = ("".join(sorted(correct)))[::-1] # reverse this string to fit with tachyons notation
-                await message.channel.send("Guesses left: " + str(get_guesses(guild)) + ", [" + correct + "]")
+                await message.channel.send("**[" + correct + "]**" + "\nGuesses left: " + str(get_guesses(guild)))
         await bot.process_commands(message)
 
 bot.remove_command("help")
 
 @bot.command(name='help')
 async def help(ctx):
-    await ctx.send("```\nGuess the correct 3-character answer from the provided 6 characters to win. Similar to Mastermind/Bulls and Cows.\n- !hack: start a new game\n   - optional: number of turns, from 4 to 12\n- !quit: quits current game\n- !help: displays this message```")
-
+    await ctx.send("""```Guess the correct 3-character answer from the provided 6 characters to win. Similar to Mastermind/Bulls and Cows.
+- !hack: start a new game   
+    - optional: number of turns, from 4 to 12
+- !quit: quits current game
+- !help: displays this message
+'?' - right character, wrong place
+'!' - right character, right place```""")
 bot.run(TOKEN)
