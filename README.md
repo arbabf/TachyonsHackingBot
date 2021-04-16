@@ -5,11 +5,11 @@ Requires the ability to read and send messages.
 The link below will allow you to add the bot to your server.
 https://discord.com/api/oauth2/authorize?client_id=795471473295753216&permissions=68672&scope=bot
 
-Commands:<br>
+Commands:
 - !hack: starts a new game
     - optional: number of turns between 4 and 12
 - !quit: quits current game
-- !help: displays help message<br>
+- !help: displays help message
 
 '?' - right character, wrong place<br>
 '!' - right character, right place
