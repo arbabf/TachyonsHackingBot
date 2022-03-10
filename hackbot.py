@@ -98,7 +98,7 @@ async def start_hack(ctx, *args):
         update_guesses(guild, arg_attempt)
         for item in array:
             char_response = "".join([char_response, item])
-        response = ("The available letters are:\n```{0}```\nYou have {1} guesses.").format(char_response, str(get_guesses(guild)))
+        response = ("The available letters are: `{0}`\nYou have {1} guesses.").format(char_response, str(get_guesses(guild)))
         update_charset(guild, char_response)
         update_status(guild, True)
         update_starttime(guild, time.perf_counter())
@@ -115,7 +115,7 @@ async def quit(ctx):
     if get_status(guild) == False:
         await ctx.send("No game is in progress!")
     else:
-        await ctx.send("Game has been stopped. Answer was: {0}".format(get_answer(guild)))
+        await ctx.send("Game has been stopped. Answer was: `{0}`".format(get_answer(guild)))
         update_status(guild, False)
 
 @bot.event
@@ -149,7 +149,7 @@ async def on_message(message):
                         return
                 update_guesses(guild, get_guesses(guild) - 1)
                 if get_guesses(guild) == 0:
-                    await message.channel.send("You have run out of guesses. The answer was: {0}".format(get_answer(guild)))
+                    await message.channel.send("You have run out of guesses. The answer was: `{0}`".format(get_answer(guild)))
                     update_status(guild, False)
                     return
                 correct = ("".join(sorted(correct)))[::-1] # reverse this string to fit with tachyons notation
@@ -160,7 +160,7 @@ bot.remove_command("help")
 
 @bot.command(name='help')
 async def help(ctx):
-    await ctx.send("""```Guess the correct 3-character answer from the provided 6 characters to win. Similar to Mastermind/Bulls and Cows.
+    await ctx.send("""```Guess the correct 3-character answer from the provided 6 characters to win. Similar to Mastermind/Bulls and Cows/Wordle.
 - !hack: start a new game   
     - optional: number of turns, from 4 to 12
 - !quit: quits current game
