@@ -90,10 +90,7 @@ async def start_hack(ctx, *args):
         c.execute("INSERT INTO games VALUES (?, ?, ?, ?, ?, ?)", (str(guild), 0, arg_attempt, "", "", 0))
         conn.commit()
     if get_status(guild) == False:
-        char_list = string.ascii_letters + string.digits
-        #remove l, I since their discord equivalents look too much the same
-        char_list = char_list.replace("l", "")
-        char_list = char_list.replace("I", "")
+        char_list = "".join([string.ascii_letters,string.digits])
         #get answer
         array = random.sample(char_list, 6)
         update_answer(guild, "".join(random.sample(array, 3)))
@@ -101,7 +98,7 @@ async def start_hack(ctx, *args):
         update_guesses(guild, arg_attempt)
         for item in array:
             char_response = "".join([char_response, item])
-        response = ("The available letters are: {0}\nYou have {1} guesses.").format(char_response, str(get_guesses(guild)))
+        response = ("The available letters are:\n```{0}```\nYou have {1} guesses.").format(char_response, str(get_guesses(guild)))
         update_charset(guild, char_response)
         update_status(guild, True)
         update_starttime(guild, time.perf_counter())
