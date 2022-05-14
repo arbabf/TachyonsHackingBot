@@ -91,6 +91,11 @@ async def start_hack(ctx, *args):
         conn.commit()
     if get_status(guild) == False:
         char_list = "".join([string.ascii_letters,string.digits])
+        # remove 0, O, l, I since their discord equivalents look too similar
+        char_list.replace("l", "")
+        char_list.replace("I", "")
+        char_list.replace("0", "")
+        char_list.replace("O", "")
         #get answer
         array = random.sample(char_list, 6)
         update_answer(guild, "".join(random.sample(array, 3)))
@@ -145,7 +150,7 @@ async def on_message(message):
                                 else:
                                     correct = "".join([correct, "?"])
                     else:
-                        await message.channel.send("One or more of the characters is not part of the given character set.")
+                        await message.channel.send("Invalid character(s)!")
                         return
                 update_guesses(guild, get_guesses(guild) - 1)
                 if get_guesses(guild) == 0:
