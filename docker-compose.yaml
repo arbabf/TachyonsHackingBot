@@ -1,6 +1,8 @@
 version: '3'
 
 services:
-  TachyonsHackingBot: 
-    image: arbabf/TachyonsHackingBot:latest 
+  tachyonshackingbot: 
+    image: ghcr.io/arbabf/tachyonshackingbot:master
+    environment:
+        - DISCORD_TOKEN=Nzk1NDcxNDczMjk1NzUzMjE2.X_J2ig.ZGoVe5XeXCjN4kxyc0mTScouBs4
     restart: unless-stopped 
