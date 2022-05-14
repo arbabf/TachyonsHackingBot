@@ -7,7 +7,6 @@ import time
 import math
 from dotenv import load_dotenv
 from discord.ext import commands
-from keep_alive import keep_alive
 
 conn = sqlite3.connect('bot.db')
 c = conn.cursor()
@@ -21,7 +20,6 @@ c.execute("""CREATE TABLE IF NOT EXISTS games(
 """)
 conn.commit()
 
-keep_alive()
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
