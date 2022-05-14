@@ -1,0 +1,6 @@
+version: '3'
+
+services:
+  TachyonsHackingBot: 
+    image: arbabf/TachyonsHackingBot:latest 
+    restart: unless-stopped 
