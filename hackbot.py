@@ -89,7 +89,7 @@ async def start_hack(ctx, *args):
     if get_status(guild) is None:
         c.execute("INSERT INTO games VALUES (?, ?, ?, ?, ?, ?)", (str(guild), 0, arg_attempt, "", "", 0))
         conn.commit()
-    if get_status(guild) == False:
+    if not get_status(guild):
         char_list = "".join([string.ascii_letters,string.digits])
         # remove 0, O, l, I since their discord equivalents look too similar
         char_list.replace("l", "")
@@ -130,7 +130,7 @@ async def on_message(message):
     """
     guild = message.guild
     if message.author != bot.user:
-        if get_status(guild) == True and len(message.content) == 3:
+        if get_status(guild) and len(message.content) == 3:
             correct = ""
             if message.content == get_answer(guild):
                 diff = time.perf_counter() - get_starttime(guild)
